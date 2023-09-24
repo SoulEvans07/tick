@@ -11,7 +11,12 @@ type ProfilePictureProps = {
 };
 
 export function ProfilePicture(props: ProfilePictureProps) {
-  const { user, priority, size = 64, className = 'h-14 w-14 rounded-full' } = props;
+  const {
+    user,
+    priority,
+    size = 64,
+    className = 'min-h-max min-w-max h-14 w-14 rounded-full',
+  } = props;
 
   return (
     <Image
