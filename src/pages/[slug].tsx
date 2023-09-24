@@ -5,6 +5,7 @@ import type {
   NextPage,
 } from 'next';
 import Head from 'next/head';
+import { Feed } from '~/components/feed';
 import { PageLayout } from '~/components/page-layout';
 import { ProfilePicture } from '~/components/profile-picture';
 import { generateSSGHelper } from '~/server/helpers/ssgHelper';
@@ -33,8 +34,9 @@ export const ProfilePage: NextPage<ProfilePageProps> = (props) => {
             user={user}
           />
         </div>
-        <div className="p-4 mt-[64px] text-2xl font-bold">@{username}</div>
+        <div className="mt-[64px] p-4 text-2xl font-bold">@{username}</div>
         <div className="w-full border-b border-slate-700" />
+        <Feed userId={user.id} emptyMessage="User has not posted yet" />
       </PageLayout>
     </>
   );

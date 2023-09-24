@@ -13,6 +13,7 @@ import {
   filterUserForClient,
   userExistsWithUsername,
 } from '../../../helpers/user';
+import { Post } from '@prisma/client';
 
 // Create a new ratelimiter, that allows 3 requests per 1 minute
 const ratelimit = new Ratelimit({
@@ -27,33 +28,41 @@ const ratelimit = new Ratelimit({
   prefix: '@upstash/ratelimit',
 });
 
+async function addUserDataToPosts(posts: Post[]) {
+  const users = await clerkClient.users.getUserList({
+    userId: posts.map((post) => post.authorId),
+  });
+
+  return posts.map((post) => {
+    const author = users.find((user) => user.id === post.authorId);
+
+    if (!userExistsWithUsername(author)) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Author for post (${post.id}) not found`,
+      });
+    }
+
+    return {
+      ...post,
+      author: filterUserForClient(author),
+    };
+  });
+}
+
 export const postRouter = createTRPCRouter({
-  list: publicProcedure.query(async ({ ctx }) => {
-    const posts = await ctx.db.post.findMany({
-      take: 100,
-      orderBy: [{ createdAt: 'desc' }],
-    });
-
-    const users = await clerkClient.users.getUserList({
-      userId: posts.map((post) => post.authorId),
-    });
-
-    return posts.map((post) => {
-      const author = users.find((user) => user.id === post.authorId);
-
-      if (!userExistsWithUsername(author)) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: `Author for post (${post.id}) not found`,
-        });
-      }
-
-      return {
-        ...post,
-        author: filterUserForClient(author),
-      };
-    });
-  }),
+  list: publicProcedure
+    .input(z.object({ userId: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const posts = await ctx.db.post
+        .findMany({
+          take: 100,
+          orderBy: [{ createdAt: 'desc' }],
+          ...(!!input?.userId ? { where: { authorId: input.userId } } : {}),
+        })
+        .then(addUserDataToPosts);
+      return posts;
+    }),
 
   create: privateProcedure
     .input(z.object({ content: z.string().min(1).max(255) }))
