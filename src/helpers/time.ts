@@ -4,4 +4,3 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
 export const time = dayjs;
-

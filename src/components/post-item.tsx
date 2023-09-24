@@ -12,7 +12,7 @@ export function PostItem(post: PostWithUser) {
         <ProfilePicture user={post.author} />
       </Link>
       <div className="flex flex-col">
-        <div className="flex gap-x-1 text-slate-400 flex-wrap">
+        <div className="flex flex-wrap gap-x-1 text-slate-400">
           <Link href={`/@${post.author.username}`}>
             <span>@{post.author.username}</span>
           </Link>
