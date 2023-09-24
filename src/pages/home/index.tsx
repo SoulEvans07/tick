@@ -10,6 +10,7 @@ dayjs.extend(relativeTime);
 import { type RouterOutputs, api } from '~/utils/api';
 import { LoadingPage } from '../../components/loading';
 import { userExistsWithUsername } from '../../helpers/user';
+import toast from 'react-hot-toast';
 
 export default function Home() {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
@@ -75,6 +76,9 @@ function CreatePostWizard() {
     onSuccess: () => {
       setContent('');
       void ctx.post.list.invalidate();
+    },
+    onError: () => {
+      toast.error('Failed to post! Please try again later.');
     },
   });
 
