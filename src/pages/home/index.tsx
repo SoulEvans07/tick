@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, KeyboardEvent } from 'react';
 import { SignInButton, useUser } from '@clerk/nextjs';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -81,7 +81,13 @@ function CreatePostWizard() {
       toast.error('Failed to post! Please try again later.');
     },
   });
-  const sendPost = () => mutate({ content });
+  const sendPost = () => mutate({ content: content.trim() });
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && content !== '' && !e.getModifierState('Shift')) {
+      e.preventDefault();
+      sendPost();
+    }
+  };
 
   if (!userExistsWithUsername(user)) return null;
 
@@ -93,6 +99,7 @@ function CreatePostWizard() {
         placeholder="Type some text..."
         value={content}
         onChange={(e) => setContent(e.target.value)}
+        onKeyDown={handleKeyDown}
         disabled={isPosting}
       />
       {content !== '' && !isPosting && <button onClick={sendPost}>Post</button>}
