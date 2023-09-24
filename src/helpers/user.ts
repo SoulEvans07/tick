@@ -6,10 +6,18 @@ type User = {
   imageUrl: string;
 };
 
-type UserWithUsername = WithRequired<User, 'username'>;
+export type UserWithUsername = WithRequired<User, 'username'>;
 
 export function userExistsWithUsername(
   user: User | null | undefined,
 ): user is UserWithUsername {
   return !!user?.username;
+}
+
+export function filterUserForClient(user: UserWithUsername) {
+  return {
+    id: user.id,
+    username: user.username,
+    imageUrl: user.imageUrl,
+  };
 }

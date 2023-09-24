@@ -1,16 +1,18 @@
 import { type User, clerkClient } from '@clerk/nextjs/server';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 
 import {
   createTRPCRouter,
   privateProcedure,
   publicProcedure,
 } from '~/server/api/trpc';
-import { userExistsWithUsername } from '../../../helpers/user';
-
-import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
+import {
+  filterUserForClient,
+  userExistsWithUsername,
+} from '../../../helpers/user';
 
 // Create a new ratelimiter, that allows 3 requests per 1 minute
 const ratelimit = new Ratelimit({
@@ -36,10 +38,8 @@ export const postRouter = createTRPCRouter({
       userId: posts.map((post) => post.authorId),
     });
 
-    const clientUserData = users.map((user) => filterUserForClient(user));
-
     return posts.map((post) => {
-      const author = clientUserData.find((user) => user.id === post.authorId);
+      const author = users.find((user) => user.id === post.authorId);
 
       if (!userExistsWithUsername(author)) {
         throw new TRPCError({
@@ -50,7 +50,7 @@ export const postRouter = createTRPCRouter({
 
       return {
         ...post,
-        author,
+        author: filterUserForClient(author),
       };
     });
   }),
@@ -73,11 +73,3 @@ export const postRouter = createTRPCRouter({
       return post;
     }),
 });
-
-function filterUserForClient(user: User) {
-  return {
-    id: user.id,
-    username: user.username,
-    imageUrl: user.imageUrl,
-  };
-}
