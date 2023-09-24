@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import Image from 'next/image';
+import { useState } from 'react';
 import { SignInButton, useUser } from '@clerk/nextjs';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -66,6 +67,21 @@ function UserImage(props: UserImageProps) {
 function CreatePostWizard() {
   const { user } = useUser();
 
+  const [content, setContent] = useState('');
+
+  const ctx = api.useContext();
+
+  const { mutate, isLoading: isPosting } = api.post.create.useMutation({
+    onSuccess: () => {
+      setContent('');
+      void ctx.post.list.invalidate();
+    },
+  });
+
+  const sendPost = () => {
+    mutate({ content });
+  };
+
   if (!userExistsWithUsername(user)) return null;
 
   return (
@@ -74,7 +90,11 @@ function CreatePostWizard() {
       <input
         className="grow bg-transparent outline-none"
         placeholder="Type some text..."
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        disabled={isPosting}
       />
+      <button onClick={sendPost}>Post</button>
     </div>
   );
 }
