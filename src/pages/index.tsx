@@ -4,9 +4,9 @@ import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import { api } from "~/utils/api";
 
 export default function Home() {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
-
   const { isSignedIn } = useUser();
+
+  const { data: posts } = api.post.list.useQuery();
 
   return (
     <>
@@ -18,10 +18,8 @@ export default function Home() {
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         {!isSignedIn && <SignInButton />}
         {isSignedIn && <SignOutButton />}
-
-        <p className="text-2xl text-white">
-          {hello.data ? hello.data.greeting : "Loading tRPC query..."}
-        </p>
+        {posts?.map((post) => <div key={post.id}>{post.content}</div>)}
+        {posts?.length === 0 && 'No posts yet'}
       </main>
     </>
   );
