@@ -9,9 +9,10 @@ interface FeedProps {
 
 export function Feed(props: FeedProps) {
   const { userId, emptyMessage = 'No posts yet' } = props;
-  const { data: posts, isLoading: postsLoading } = api.post.list.useQuery({
-    userId,
-  });
+  const { data: posts, isLoading: postsLoading } = api.post.list.useQuery(
+    { userId },
+    { refetchOnWindowFocus: true },
+  );
 
   return (
     <div className="flex flex-col overflow-y-scroll">

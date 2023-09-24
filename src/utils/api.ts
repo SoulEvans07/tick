@@ -43,6 +43,15 @@ export const api = createTRPCNext<AppRouter>({
           url: `${getBaseUrl()}/api/trpc`,
         }),
       ],
+      // https://github.com/trpc/trpc/discussions/1987#discussioncomment-2949169
+      queryClientConfig: {
+        defaultOptions: {
+          queries: {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false
+          },
+        },
+      }
     };
   },
   /**
