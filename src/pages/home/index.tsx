@@ -1,14 +1,14 @@
-import Head from "next/head";
-import Image from "next/image";
-import { SignInButton, useUser } from "@clerk/nextjs";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
+import Head from 'next/head';
+import Image from 'next/image';
+import { SignInButton, useUser } from '@clerk/nextjs';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTime);
 
-import { type RouterOutputs, api } from "~/utils/api";
-import { LoadingPage } from "../../components/loading";
-import { userExistsWithUsername } from "../../helpers/user";
+import { type RouterOutputs, api } from '~/utils/api';
+import { LoadingPage } from '../../components/loading';
+import { userExistsWithUsername } from '../../helpers/user';
 
 export default function Home() {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
@@ -44,7 +44,7 @@ export default function Home() {
 }
 
 type UserImageProps = {
-  user: PostWithUser["author"];
+  user: PostWithUser['author'];
   priority?: boolean;
 };
 
@@ -79,7 +79,7 @@ function CreatePostWizard() {
   );
 }
 
-type PostWithUser = RouterOutputs["post"]["list"][number];
+type PostWithUser = RouterOutputs['post']['list'][number];
 
 function PostItem(post: PostWithUser) {
   return (
@@ -107,7 +107,7 @@ function Feed() {
           <LoadingPage />
         </div>
       ) : !posts?.length ? (
-        "No posts yet"
+        'No posts yet'
       ) : (
         posts.map((post) => <PostItem key={post.id} {...post} />)
       )}

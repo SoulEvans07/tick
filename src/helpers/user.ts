@@ -6,7 +6,7 @@ type User = {
   imageUrl: string;
 };
 
-type UserWithUsername = WithRequired<User, "username">;
+type UserWithUsername = WithRequired<User, 'username'>;
 
 export function userExistsWithUsername(
   user: User | null | undefined,

@@ -1,7 +1,7 @@
-import { type User, clerkClient } from "@clerk/nextjs/server";
-import { TRPCError } from "@trpc/server";
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { userExistsWithUsername } from "../../../helpers/user";
+import { type User, clerkClient } from '@clerk/nextjs/server';
+import { TRPCError } from '@trpc/server';
+import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
+import { userExistsWithUsername } from '../../../helpers/user';
 
 export const postRouter = createTRPCRouter({
   list: publicProcedure.query(async ({ ctx }) => {
@@ -20,7 +20,7 @@ export const postRouter = createTRPCRouter({
 
       if (!userExistsWithUsername(author)) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+          code: 'INTERNAL_SERVER_ERROR',
           message: `Author for post (${post.id}) not found`,
         });
       }

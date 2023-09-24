@@ -1,5 +1,5 @@
-import Head from "next/head";
-import { SignInButton } from "@clerk/nextjs";
+import Head from 'next/head';
+import { SignInButton } from '@clerk/nextjs';
 
 export default function Welcome() {
   return (
