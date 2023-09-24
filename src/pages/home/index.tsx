@@ -8,7 +8,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
 import { type RouterOutputs, api } from '~/utils/api';
-import { LoadingPage } from '../../components/loading';
+import { LoadingPage, LoadingSpinner } from '../../components/loading';
 import { userExistsWithUsername } from '../../helpers/user';
 import toast from 'react-hot-toast';
 
@@ -81,10 +81,7 @@ function CreatePostWizard() {
       toast.error('Failed to post! Please try again later.');
     },
   });
-
-  const sendPost = () => {
-    mutate({ content });
-  };
+  const sendPost = () => mutate({ content });
 
   if (!userExistsWithUsername(user)) return null;
 
@@ -98,7 +95,12 @@ function CreatePostWizard() {
         onChange={(e) => setContent(e.target.value)}
         disabled={isPosting}
       />
-      <button onClick={sendPost}>Post</button>
+      {content !== '' && !isPosting && <button onClick={sendPost}>Post</button>}
+      {isPosting && (
+        <div className="flex items-center justify-center">
+          <LoadingSpinner size={20} />
+        </div>
+      )}
     </div>
   );
 }
