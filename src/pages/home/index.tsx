@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState, KeyboardEvent } from 'react';
+import toast from 'react-hot-toast';
 import { SignInButton, useUser } from '@clerk/nextjs';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -10,7 +12,6 @@ dayjs.extend(relativeTime);
 import { type RouterOutputs, api } from '~/utils/api';
 import { LoadingPage, LoadingSpinner } from '../../components/loading';
 import { userExistsWithUsername } from '../../helpers/user';
-import toast from 'react-hot-toast';
 
 export default function Home() {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
@@ -53,15 +54,17 @@ type UserImageProps = {
 function UserImage(props: UserImageProps) {
   const { user, priority } = props;
   return (
-    <Image
-      src={user.imageUrl}
-      alt={`@${user.username} profile`}
-      width={100}
-      height={100}
-      className="h-14 w-14 rounded-full"
-      placeholder="empty"
-      priority={priority}
-    />
+    <Link href={`/@${user.username}`}>
+      <Image
+        src={user.imageUrl}
+        alt={`@${user.username} profile`}
+        width={100}
+        height={100}
+        className="h-14 w-14 rounded-full"
+        placeholder="empty"
+        priority={priority}
+      />
+    </Link>
   );
 }
 
@@ -120,9 +123,13 @@ function PostItem(post: PostWithUser) {
       <UserImage user={post.author} />
       <div className="flex flex-col">
         <div className="flex gap-1 text-slate-400">
-          <span>@{post.author.username}</span>
+          <Link href={`/@${post.author.username}`}>
+            <span>@{post.author.username}</span>
+          </Link>
           <span>·</span>
-          <span>{dayjs(post.createdAt).fromNow()}</span>
+          <Link href={`/post/${post.id}`}>
+            <span>{dayjs(post.createdAt).fromNow()}</span>
+          </Link>
         </div>
         <span>{post.content}</span>
       </div>
