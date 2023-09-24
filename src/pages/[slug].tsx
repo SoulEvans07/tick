@@ -43,12 +43,11 @@ export const ProfilePage: NextPage<ProfilePageProps> = (props) => {
 };
 
 export const getStaticProps = (async (context) => {
-  const ssg = generateSSGHelper();
-
   const slug = context.params?.slug;
   if (typeof slug !== 'string') throw new Error('no slug');
-
   const username = slug.replace('@', '');
+
+  const ssg = generateSSGHelper();
   await ssg.profile.getByUsername.prefetch({ username });
 
   return {

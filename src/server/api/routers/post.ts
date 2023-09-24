@@ -28,6 +28,24 @@ const ratelimit = new Ratelimit({
   prefix: '@upstash/ratelimit',
 });
 
+async function getUsers(userIds?: string[]) {
+  return clerkClient.users.getUserList({ userId: userIds });
+}
+
+function linkUserDataToPost(post: Post, author: User | undefined) {
+  if (!userExistsWithUsername(author)) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: `Author by id (${post.authorId}) for post (${post.id}) not found`,
+    });
+  }
+
+  return {
+    ...post,
+    author: filterUserForClient(author),
+  };
+}
+
 async function addUserDataToPosts(posts: Post[]) {
   const users = await clerkClient.users.getUserList({
     userId: posts.map((post) => post.authorId),
@@ -35,18 +53,7 @@ async function addUserDataToPosts(posts: Post[]) {
 
   return posts.map((post) => {
     const author = users.find((user) => user.id === post.authorId);
-
-    if (!userExistsWithUsername(author)) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: `Author for post (${post.id}) not found`,
-      });
-    }
-
-    return {
-      ...post,
-      author: filterUserForClient(author),
-    };
+    return linkUserDataToPost(post, author);
   });
 }
 
@@ -62,6 +69,16 @@ export const postRouter = createTRPCRouter({
         })
         .then(addUserDataToPosts);
       return posts;
+    }),
+
+  getById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const post = await ctx.db.post.findUnique({ where: { id: input.id } });
+      if (!post) throw new TRPCError({ code: 'NOT_FOUND' });
+
+      const author = await clerkClient.users.getUser(post.authorId);
+      return linkUserDataToPost(post, author);
     }),
 
   create: privateProcedure
