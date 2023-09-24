@@ -1,0 +1,27 @@
+name: CI
+
+on: [push, pull_request]
+
+env:
+  DATABASE_URL: "https://fake.com"
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_test_key"
+  CLERK_SECRET_KEY: "some_random_secret"
+  UPSTASH_REDIS_REST_URL: "https://fake.com"
+  UPSTASH_REDIS_REST_TOKEN: "SomeRandomToken"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
