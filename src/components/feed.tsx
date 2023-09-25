@@ -11,7 +11,10 @@ export function Feed(props: FeedProps) {
   const { userId, emptyMessage = 'No posts yet' } = props;
   const { data: posts, isLoading: postsLoading } = api.post.list.useQuery(
     { userId },
-    { refetchOnWindowFocus: true },
+    {
+      refetchOnWindowFocus: true,
+      // trpc: { context: { skipBatch: true } }
+    },
   );
 
   return (
