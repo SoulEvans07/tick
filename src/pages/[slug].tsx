@@ -59,8 +59,12 @@ export const getStaticProps = (async (context) => {
   };
 }) satisfies GetStaticProps;
 
-export const getStaticPaths: GetStaticPaths = () => {
-  return { paths: [], fallback: 'blocking' };
+export const getStaticPaths: GetStaticPaths = async () => {
+  const ssg = generateSSGHelper();
+  const profiles = await ssg.profile.list.fetch();
+  const profileUrls = profiles.map((profile) => `/@${profile.username}`);
+
+  return { paths: profileUrls, fallback: 'blocking' };
 };
 
 export default ProfilePage;

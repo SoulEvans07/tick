@@ -51,8 +51,12 @@ export const getStaticProps = (async (context) => {
   };
 }) satisfies GetStaticProps;
 
-export const getStaticPaths: GetStaticPaths = () => {
-  return { paths: [], fallback: 'blocking' };
+export const getStaticPaths: GetStaticPaths = async () => {
+  const ssg = generateSSGHelper();
+  const posts = await ssg.post.list.fetch();
+  const postUrls = posts.map((post) => `/post/${post.id}`);
+
+  return { paths: postUrls, fallback: 'blocking' };
 };
 
 export default SinglePostPage;
