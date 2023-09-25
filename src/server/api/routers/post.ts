@@ -28,10 +28,6 @@ const ratelimit = new Ratelimit({
   prefix: '@upstash/ratelimit',
 });
 
-async function getUsers(userIds?: string[]) {
-  return clerkClient.users.getUserList({ userId: userIds });
-}
-
 function linkUserDataToPost(post: Post, author: User | undefined) {
   if (!userExistsWithUsername(author)) {
     throw new TRPCError({
