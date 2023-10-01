@@ -8,8 +8,36 @@ import {
   publicProcedure,
 } from '~/server/api/trpc';
 import { commentRatelimiter } from '~/server/api/ratelimit';
+import { linkAuthorToData, addAuthorToItems } from '../mappers/author';
 
 export const commentRouter = createTRPCRouter({
+  list: publicProcedure
+    .input(z.object({ authorId: z.string() }).optional())
+    .query(async ({ ctx, input }) => {
+      const comments = await ctx.db.comment
+        .findMany({
+          take: 100,
+          orderBy: [{ createdAt: 'desc' }],
+          ...(input && 'authorId' in input
+            ? { where: { authorId: input.authorId } }
+            : {}),
+        })
+        .then(addAuthorToItems);
+      return comments;
+    }),
+
+  getById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const comment = await ctx.db.comment.findUnique({
+        where: { id: input.id },
+      });
+      if (!comment) throw new TRPCError({ code: 'NOT_FOUND' });
+
+      const author = await clerkClient.users.getUser(comment.authorId);
+      return linkAuthorToData(comment, author);
+    }),
+
   create: privateProcedure
     .input(
       z.object({
