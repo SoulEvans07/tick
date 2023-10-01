@@ -1,7 +1,6 @@
 import type {
-  GetStaticPaths,
-  GetStaticProps,
-  InferGetStaticPropsType,
+  GetServerSideProps,
+  InferGetServerSidePropsType,
   NextPage,
 } from 'next';
 import Head from 'next/head';
@@ -14,7 +13,9 @@ import { truncate } from '~/helpers/string';
 import { generateSSGHelper } from '~/server/helpers/ssgHelper';
 import { api } from '~/utils/api';
 
-type SinglePostPageProps = InferGetStaticPropsType<typeof getStaticProps>;
+type SinglePostPageProps = InferGetServerSidePropsType<
+  typeof getServerSideProps
+>;
 
 export const SinglePostPage: NextPage<SinglePostPageProps> = (props) => {
   const { id } = props;
@@ -44,7 +45,7 @@ export const SinglePostPage: NextPage<SinglePostPageProps> = (props) => {
   );
 };
 
-export const getStaticProps = (async (context) => {
+export const getServerSideProps = (async (context) => {
   const id = context.params?.id;
   if (typeof id !== 'string') throw new Error('no id');
 
@@ -57,15 +58,6 @@ export const getStaticProps = (async (context) => {
       id,
     },
   };
-}) satisfies GetStaticProps;
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  const ssg = generateSSGHelper();
-  const posts = await ssg.post.list.fetch();
-  // TODO: limit
-  const postUrls = posts.map((post) => `/post/${post.id}`);
-
-  return { paths: postUrls, fallback: 'blocking' };
-};
+}) satisfies GetServerSideProps;
 
 export default SinglePostPage;
