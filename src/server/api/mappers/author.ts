@@ -28,7 +28,7 @@ export async function addAuthorToItems<P extends AuthoredItem>(
   typeName?: string,
 ) {
   const users = await clerkClient.users.getUserList({
-    userId: items.map((post) => post.authorId),
+    userId: items.map((item) => item.authorId),
   });
 
   return items.map((item) => {

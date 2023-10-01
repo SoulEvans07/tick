@@ -9,7 +9,7 @@ import { LoadingSpinner } from '~/components/loading';
 import { userExistsWithUsername, filterUserForClient } from '~/helpers/user';
 import { PageLayout } from '~/components/page-layout';
 import { ProfilePicture } from '~/components/profile-picture';
-import { Feed } from '~/components/feed';
+import { PostFeed } from '~/components/post-feed';
 
 export default function Home() {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
@@ -30,7 +30,7 @@ export default function Home() {
           )}
         </div>
       )}
-      <Feed />
+      <PostFeed />
     </PageLayout>
   );
 }

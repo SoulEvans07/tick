@@ -37,7 +37,10 @@ export const SinglePostPage: NextPage<SinglePostPageProps> = (props) => {
         <CommentPrompt postId={id} />
         <div className="flex flex-col overflow-y-scroll">
           {post.comments.map((comment) => (
-            <CommentItem key={comment.id} {...comment} />
+            <>
+              <CommentItem key={comment.id} {...comment} />
+              <div className="w-full border-b border-slate-700" />
+            </>
           ))}
         </div>
       </PageLayout>

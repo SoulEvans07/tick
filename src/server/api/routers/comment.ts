@@ -11,19 +11,48 @@ import { commentRatelimiter } from '~/server/api/ratelimit';
 import { linkAuthorToData, addAuthorToItems } from '../mappers/author';
 
 export const commentRouter = createTRPCRouter({
-  list: publicProcedure
-    .input(z.object({ authorId: z.string() }).optional())
+  list: publicProcedure.query(async ({ ctx }) => {
+    const comments = await ctx.db.comment
+      .findMany({
+        take: 100,
+        orderBy: [{ createdAt: 'desc' }],
+      })
+      .then(addAuthorToItems);
+    return comments;
+  }),
+
+  listByAuthor: publicProcedure
+    .input(z.object({ authorId: z.string() }))
     .query(async ({ ctx, input }) => {
       const comments = await ctx.db.comment
         .findMany({
           take: 100,
           orderBy: [{ createdAt: 'desc' }],
-          ...(input && 'authorId' in input
-            ? { where: { authorId: input.authorId } }
-            : {}),
+          where: { authorId: input.authorId },
+          include: {
+            post: {
+              include: {
+                _count: { select: { comments: true } },
+              },
+            },
+          },
         })
         .then(addAuthorToItems);
-      return comments;
+
+      // P0: optimize this
+      const postUsers = await clerkClient.users.getUserList({
+        userId: comments.map((comment) => comment.post.authorId),
+      });
+
+      return comments.map((comment) => {
+        const author = postUsers.find(
+          (user) => user.id === comment.post.authorId,
+        );
+        return {
+          ...comment,
+          post: linkAuthorToData(comment.post, author),
+        };
+      });
     }),
 
   getById: publicProcedure

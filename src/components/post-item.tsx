@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import cn from 'classnames';
 
 import { time } from '~/helpers/time';
 import { ProfilePicture } from '~/components/profile-picture';
@@ -6,9 +7,11 @@ import type { RouterOutputs } from '~/utils/api';
 import { CommentBubble } from '~/assets/icons/comment-bubble';
 
 type PostWithUser = RouterOutputs['post']['list'][number];
-export function PostItem(post: PostWithUser) {
+type PostItemProps = PostWithUser & { className?: string };
+export function PostItem(props: PostItemProps) {
+  const { className, ...post } = props;
   return (
-    <div key={post.id} className="flex gap-4 border-b border-slate-700 p-4">
+    <div key={post.id} className={cn('flex gap-4 p-4', className)}>
       <Link href={`/@${post.author.username}`}>
         <ProfilePicture user={post.author} />
       </Link>

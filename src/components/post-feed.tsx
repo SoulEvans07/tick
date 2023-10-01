@@ -2,19 +2,16 @@ import { api } from '~/utils/api';
 import { LoadingPage } from '~/components/loading';
 import { PostItem } from '~/components/post-item';
 
-interface FeedProps {
+interface PostFeedProps {
   userId?: string;
   emptyMessage?: string;
 }
 
-export function Feed(props: FeedProps) {
+export function PostFeed(props: PostFeedProps) {
   const { userId, emptyMessage = 'No posts yet' } = props;
   const { data: posts, isLoading: postsLoading } = api.post.list.useQuery(
     { authorId: userId },
-    {
-      refetchOnWindowFocus: true,
-      // trpc: { context: { skipBatch: true } }
-    },
+    { refetchOnWindowFocus: true },
   );
 
   return (
@@ -26,7 +23,12 @@ export function Feed(props: FeedProps) {
       ) : !posts?.length ? (
         emptyMessage
       ) : (
-        posts.map((post) => <PostItem key={post.id} {...post} />)
+        posts.map((post) => (
+          <>
+            <PostItem key={post.id} {...post} />
+            <div className="w-full border-b border-slate-700" />
+          </>
+        ))
       )}
     </div>
   );
