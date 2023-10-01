@@ -15,3 +15,10 @@ export const commentRatelimiter = new Ratelimit({
   analytics: true,
   prefix: '@upstash/ratelimit',
 });
+
+export const reactRatelimiter = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(10, '1 m'),
+  analytics: true,
+  prefix: '@upstash/ratelimit',
+});

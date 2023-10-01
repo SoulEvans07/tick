@@ -7,7 +7,8 @@ import {
   privateProcedure,
   publicProcedure,
 } from '~/server/api/trpc';
-import { postRatelimiter } from '~/server/api/ratelimit';
+import { Emoji } from '~/helpers/emoji';
+import { postRatelimiter, reactRatelimiter } from '~/server/api/ratelimit';
 import { linkAuthorToData, addAuthorToItems } from '../mappers/author';
 
 export const postRouter = createTRPCRouter({
@@ -19,6 +20,7 @@ export const postRouter = createTRPCRouter({
           take: 100,
           orderBy: [{ createdAt: 'desc' }],
           include: {
+            reactions: true,
             _count: { select: { comments: true } },
           },
           ...(!!input?.authorId ? { where: { authorId: input.authorId } } : {}),
@@ -33,10 +35,12 @@ export const postRouter = createTRPCRouter({
       const post = await ctx.db.post.findUnique({
         where: { id: input.id },
         include: {
+          reactions: true,
           _count: { select: { comments: true } },
           comments: {
             take: 100,
             orderBy: [{ createdAt: 'asc' }],
+            include: { reactions: true },
           },
         },
       });
@@ -70,5 +74,34 @@ export const postRouter = createTRPCRouter({
       });
 
       return post;
+    }),
+
+  react: privateProcedure
+    .input(z.object({ postId: z.string().cuid(), react: Emoji }))
+    .mutation(async ({ ctx, input }) => {
+      const authorId = ctx.currentUserId;
+
+      const { success } = await reactRatelimiter.limit(authorId);
+      if (!success) {
+        throw new TRPCError({
+          code: 'TOO_MANY_REQUESTS',
+          message: 'Too many reacts',
+        });
+      }
+
+      const post = await ctx.db.post.findUnique({
+        where: { id: input.postId },
+      });
+      if (!post) throw new TRPCError({ code: 'NOT_FOUND' });
+
+      const react = await ctx.db.postReaction.create({
+        data: {
+          authorId,
+          postId: input.postId,
+          emoji: input.react,
+        },
+      });
+
+      return react;
     }),
 });

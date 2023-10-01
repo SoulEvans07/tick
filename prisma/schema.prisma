@@ -12,25 +12,58 @@ datasource db {
 }
 
 model Post {
-    id        String    @id @default(cuid())
-    createdAt DateTime  @default(now())
+    id        String         @id @default(cuid())
+    createdAt DateTime       @default(now())
     deletedAt DateTime?
-    content   String    @db.VarChar(255)
+    content   String         @db.VarChar(255)
     authorId  String
     comments  Comment[]
+    reactions PostReaction[]
 
     @@index([authorId])
 }
 
-model Comment {
-    id        String    @id @default(cuid())
-    createdAt DateTime  @default(now())
-    deletedAt DateTime?
-    content   String    @db.VarChar(255)
+model PostReaction {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
     authorId  String
-    post      Post      @relation(fields: [postId], references: [id])
+    emoji     String
+    post      Post     @relation(fields: [postId], references: [id])
     postId    String
 
     @@index([postId])
+    @@index([postId, emoji])
+}
+
+model Comment {
+    id        String            @id @default(cuid())
+    createdAt DateTime          @default(now())
+    deletedAt DateTime?
+    content   String            @db.VarChar(255)
+    authorId  String
+    post      Post              @relation(fields: [postId], references: [id])
+    postId    String
+    reactions CommentReaction[]
+
+    @@index([postId])
     @@index([authorId])
+}
+
+model CommentReaction {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    authorId  String
+    emoji     String
+    comment   Comment  @relation(fields: [commentId], references: [id])
+    commentId String
+
+    @@index([commentId])
+    @@index([commentId, emoji])
+}
+
+model Emoji {
+    name  String @id
+    image String
+
+    @@index([name])
 }
