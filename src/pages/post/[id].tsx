@@ -5,9 +5,11 @@ import type {
   NextPage,
 } from 'next';
 import Head from 'next/head';
+import { CommentItem } from '~/components/comment-item';
+import { CommentPrompt } from '~/components/comment-promt';
 
 import { PageLayout } from '~/components/page-layout';
-import { PostItem } from '~/components/post-item';
+import { PostDetailedItem } from '~/components/post-detailed-item';
 import { truncate } from '~/helpers/string';
 import { generateSSGHelper } from '~/server/helpers/ssgHelper';
 import { api } from '~/utils/api';
@@ -30,7 +32,13 @@ export const SinglePostPage: NextPage<SinglePostPageProps> = (props) => {
         </title>
       </Head>
       <PageLayout>
-        <PostItem {...post} />
+        <PostDetailedItem {...post} />
+        <CommentPrompt postId={id} />
+        <div className="flex flex-col overflow-y-scroll">
+          {post.comments.map((comment) => (
+            <CommentItem key={comment.id} {...comment} />
+          ))}
+        </div>
       </PageLayout>
     </>
   );
@@ -54,6 +62,7 @@ export const getStaticProps = (async (context) => {
 export const getStaticPaths: GetStaticPaths = async () => {
   const ssg = generateSSGHelper();
   const posts = await ssg.post.list.fetch();
+  // TODO: limit
   const postUrls = posts.map((post) => `/post/${post.id}`);
 
   return { paths: postUrls, fallback: 'blocking' };

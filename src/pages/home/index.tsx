@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import { useState, KeyboardEvent } from 'react';
+import { useState, type KeyboardEvent } from 'react';
 import toast from 'react-hot-toast';
 import { SignInButton, useUser } from '@clerk/nextjs';
 import { TRPCClientError } from '@trpc/client';
 
 import { api } from '~/utils/api';
-import { LoadingSpinner } from '../../components/loading';
+import { LoadingSpinner } from '~/components/loading';
 import { userExistsWithUsername, filterUserForClient } from '~/helpers/user';
 import { PageLayout } from '~/components/page-layout';
 import { ProfilePicture } from '~/components/profile-picture';
@@ -52,16 +52,19 @@ function CreatePostWizard() {
       const prevData = utils.post.list.getData();
       if (!prevData) throw new TRPCClientError('Post list undefined');
 
-      utils.post.list.setData({ userId: undefined }, (prev) => {
+      utils.post.list.setData({ authorId: undefined }, (prev) => {
         if (!prev) throw new TRPCClientError('Post list undefined');
 
         return [
           {
             id: 'temp-post-id',
             createdAt: new Date(),
+            deletedAt: null,
             authorId: user.id,
             author: filterUserForClient(user),
             content: '[opt] ' + payload.content,
+            reactions: [],
+            _count: { comments: 0 },
           },
           ...prev,
         ];
@@ -75,8 +78,13 @@ function CreatePostWizard() {
       void utils.post.list.invalidate();
     },
     onError: (_err, _payload, context) => {
+      if (!context) {
+        throw new TRPCClientError(
+          'Unable to recover post failure without context!',
+        );
+      }
       // If the mutation fails, use the context-value from onMutate
-      utils.post.list.setData(undefined, context?.prevData);
+      utils.post.list.setData(undefined, context.prevData);
       toast.error('Failed to post! Please try again later.');
     },
   });

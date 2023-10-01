@@ -1,7 +1,6 @@
 import Image from 'next/image';
-import cn from 'classnames';
 
-import { UserWithUsername } from '~/helpers/user';
+import { type UserWithUsername } from '~/helpers/user';
 
 type ProfilePictureProps = {
   user: UserWithUsername;
@@ -15,7 +14,7 @@ export function ProfilePicture(props: ProfilePictureProps) {
     user,
     priority,
     size = 64,
-    className = 'min-h-max min-w-max h-14 w-14 rounded-full',
+    className = 'min-h-max min-w-max h-12 w-12 rounded-full',
   } = props;
 
   return (
