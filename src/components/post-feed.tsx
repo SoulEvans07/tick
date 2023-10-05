@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { api } from '~/utils/api';
 import { LoadingPage } from '~/components/loading';
 import { PostItem } from '~/components/post-item';
@@ -24,10 +25,10 @@ export function PostFeed(props: PostFeedProps) {
         emptyMessage
       ) : (
         posts.map((post) => (
-          <>
-            <PostItem key={post.id} {...post} />
+          <Fragment key={post.id}>
+            <PostItem {...post} />
             <div className="w-full border-b border-slate-700" />
-          </>
+          </Fragment>
         ))
       )}
     </div>
