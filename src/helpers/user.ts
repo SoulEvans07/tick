@@ -9,7 +9,7 @@ type User = {
 export type UserWithUsername = WithRequired<User, 'username'>;
 
 export function userExistsWithUsername(
-  user: User | null | undefined,
+  user: User | null | undefined
 ): user is UserWithUsername {
   return !!user?.username;
 }

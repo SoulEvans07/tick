@@ -12,7 +12,7 @@ export function PostFeed(props: PostFeedProps) {
   const { userId, emptyMessage = 'No posts yet' } = props;
   const { data: posts, isLoading: postsLoading } = api.post.list.useQuery(
     { authorId: userId },
-    { refetchOnWindowFocus: true },
+    { refetchOnWindowFocus: true }
   );
 
   return (

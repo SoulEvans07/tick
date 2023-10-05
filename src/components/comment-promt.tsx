@@ -64,7 +64,7 @@ export function CommentPrompt(props: CommentPromptProps) {
     onError: (_err, _payload, context) => {
       if (!context) {
         throw new TRPCClientError(
-          'Unable to recover comment failure without context!',
+          'Unable to recover comment failure without context!'
         );
       }
       // If the mutation fails, use the context-value from onMutate

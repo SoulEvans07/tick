@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "next lint",
     "start": "next start",
-    "fmt": "prettier --write ./src"
+    "fmt": "prettier --write ."
   },
   "dependencies": {
     "@clerk/nextjs": "^4.24.1",

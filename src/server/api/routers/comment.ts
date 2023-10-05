@@ -46,7 +46,7 @@ export const commentRouter = createTRPCRouter({
 
       return comments.map((comment) => {
         const author = postUsers.find(
-          (user) => user.id === comment.post.authorId,
+          (user) => user.id === comment.post.authorId
         );
         return {
           ...comment,
@@ -72,7 +72,7 @@ export const commentRouter = createTRPCRouter({
       z.object({
         postId: z.string().cuid(),
         content: z.string().min(1).max(255),
-      }),
+      })
     )
     .mutation(async ({ ctx, input }) => {
       const authorId = ctx.currentUserId;

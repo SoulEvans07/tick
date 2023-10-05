@@ -80,7 +80,7 @@ function CreatePostWizard() {
     onError: (_err, _payload, context) => {
       if (!context) {
         throw new TRPCClientError(
-          'Unable to recover post failure without context!',
+          'Unable to recover post failure without context!'
         );
       }
       // If the mutation fails, use the context-value from onMutate

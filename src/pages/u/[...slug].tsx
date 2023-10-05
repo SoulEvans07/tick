@@ -67,7 +67,7 @@ const tabVariants = cva(
     defaultVariants: {
       active: false,
     },
-  },
+  }
 );
 
 type Tab = { key: string; title: string; url: string };

@@ -45,7 +45,7 @@ export const postRouter = createTRPCRouter({
       const author = await clerkClient.users.getUser(post.authorId);
       return linkAuthorToData(
         { ...post, comments: await addAuthorToItems(post.comments) },
-        author,
+        author
       );
     }),
 

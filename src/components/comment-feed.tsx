@@ -12,7 +12,7 @@ export function CommetFeed(props: CommentFeedProps) {
   const { data: comments, isLoading: postsLoading } =
     api.comment.listByAuthor.useQuery(
       { authorId: userId },
-      { refetchOnWindowFocus: true },
+      { refetchOnWindowFocus: true }
     );
 
   return (

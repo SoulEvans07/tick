@@ -7,7 +7,7 @@ export type AuthoredItem = { id: string; authorId: string };
 export function linkAuthorToData<P extends AuthoredItem>(
   item: P,
   author: User | undefined,
-  typeName?: string,
+  typeName?: string
 ) {
   if (!userExistsWithUsername(author)) {
     const forData = typeName ? ` for ${typeName} item (${item.id})` : '';
@@ -25,7 +25,7 @@ export function linkAuthorToData<P extends AuthoredItem>(
 
 export async function addAuthorToItems<P extends AuthoredItem>(
   items: P[],
-  typeName?: string,
+  typeName?: string
 ) {
   const users = await clerkClient.users.getUserList({
     userId: items.map((item) => item.authorId),
