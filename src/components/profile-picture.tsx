@@ -7,6 +7,7 @@ type ProfilePictureProps = {
   className?: string;
   size?: number | `${number}`;
   priority?: boolean;
+  onClick?: VoidFunction;
 };
 
 export function ProfilePicture(props: ProfilePictureProps) {
@@ -15,6 +16,7 @@ export function ProfilePicture(props: ProfilePictureProps) {
     priority,
     size = 64,
     className = 'min-h-max min-w-max h-12 w-12 rounded-full',
+    onClick,
   } = props;
 
   return (
@@ -26,6 +28,7 @@ export function ProfilePicture(props: ProfilePictureProps) {
       className={className}
       placeholder="empty"
       priority={priority}
+      onClick={onClick}
     />
   );
 }

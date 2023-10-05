@@ -1,7 +1,6 @@
-import Link from 'next/link';
 import { useState, type KeyboardEvent } from 'react';
 import toast from 'react-hot-toast';
-import { SignInButton, useUser } from '@clerk/nextjs';
+import { SignInButton, useClerk, useUser } from '@clerk/nextjs';
 import { TRPCClientError } from '@trpc/client';
 
 import { api } from '~/utils/api';
@@ -37,6 +36,7 @@ export default function Home() {
 
 function CreatePostWizard() {
   const { user } = useUser();
+  const clerk = useClerk();
 
   const [content, setContent] = useState('');
 
@@ -100,9 +100,7 @@ function CreatePostWizard() {
 
   return (
     <div className="flex w-full gap-4">
-      <Link href={`/u/@${user.username}`} className="min-w-max">
-        <ProfilePicture user={user} />
-      </Link>
+      <ProfilePicture user={user} onClick={() => void clerk.signOut()} />
       <input
         className="min-w-0 grow bg-transparent outline-none"
         placeholder="Type some text..."

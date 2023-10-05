@@ -10,12 +10,12 @@ export default authMiddleware({
   afterAuth(auth, req) {
     if (!auth.isPublicRoute && !auth.userId) {
       const login = new URL('/', req.url);
-      return NextResponse.redirect(login);
+      return NextResponse.redirect(login); // only absolute urls
     }
 
     if (req.nextUrl.pathname === '/' && !!auth.userId) {
       const home = new URL('/home', req.url);
-      return NextResponse.redirect(home);
+      return NextResponse.redirect(home); // only absolute urls
     }
 
     // NOTE: I just spent 30 min on this
