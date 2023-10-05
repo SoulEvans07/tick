@@ -4,7 +4,7 @@ import { time } from '~/helpers/time';
 import { ProfilePicture } from '~/components/profile-picture';
 import type { RouterOutputs } from '~/utils/api';
 import { CommentBubble } from '~/assets/icons/comment-bubble';
-import { replaceEmojis } from '~/helpers/emoji';
+import { emojiInterpolation } from '~/helpers/emoji';
 
 type PostWithUser = RouterOutputs['post']['list'][number];
 export function PostDetailedItem(post: PostWithUser) {
@@ -28,7 +28,7 @@ export function PostDetailedItem(post: PostWithUser) {
               </Link>
             </div>
             <div className="flex items-center" title={post.content}>
-              {replaceEmojis(post.content)}
+              {emojiInterpolation(post.content)}
             </div>
           </div>
         </div>

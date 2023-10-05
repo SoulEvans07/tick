@@ -36,32 +36,47 @@ export function parseEmojiTag(tag: string) {
   return emoji;
 }
 
-export function replaceEmojis(content: string): JSX.Element | JSX.Element[] {
+// P0: write test
+// P1: refactor
+export function emojiInterpolation(
+  content: string
+): JSX.Element | JSX.Element[] {
   const elements: JSX.Element[] = [];
 
-  const parts = content
+  let parts = content
     .split(':')
     .flatMap((o, i, a) => (a.length - 1 === i ? [o] : [o, ':']))
     .filter(Boolean);
 
   let acc: string[] = [];
-  for (let i = 0; i < parts.length - 2; i += 0) {
-    const [before, curr, after] = [parts[i], parts[i + 1], parts[i + 2]];
-    if (!before || !curr || !after) throw new Error('Index out of bounds');
-    const tag = [before, curr, after].join('');
+  let i = 0;
+  while (parts.length > 0) {
+    i++;
+    const [before, middle, after, ...rest] = parts;
+    if (!before || !middle || !after) {
+      const text = parts.join('');
+      elements.push(
+        <span className="whitespace-pre-wrap" key={text}>
+          {text}
+        </span>
+      );
+      parts = [];
+      continue;
+    }
+
+    const tag = [before, middle, after].join('');
 
     if (tag.startsWith(':') && tag.endsWith(':')) {
       const emoji = parseEmojiTag(tag);
-      console.log(tag, '|', emoji, '|', content);
       if (emoji) {
         if (acc.length) {
           const text = acc.join('');
+          acc = [];
           elements.push(
             <span className="whitespace-pre-wrap" key={text}>
               {text}
             </span>
           );
-          acc = [];
         }
 
         elements.push(
@@ -76,23 +91,18 @@ export function replaceEmojis(content: string): JSX.Element | JSX.Element[] {
             />
           </div>
         );
-        i += 3;
+        parts = rest;
+        continue;
       } else {
-        acc = [...acc, before, tag];
-        i += 2;
+        acc = [...acc, before, middle];
+        parts = [after, ...rest];
+        continue;
       }
     } else {
       acc = [...acc, before];
-      i++;
+      parts = [middle, after, ...rest];
+      continue;
     }
-  }
-  if (acc.length) {
-    const text = acc.join('');
-    elements.push(
-      <span className="whitespace-pre-wrap" key={text}>
-        {text}
-      </span>
-    );
   }
 
   return elements;
