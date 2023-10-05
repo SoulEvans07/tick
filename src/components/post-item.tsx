@@ -12,12 +12,12 @@ export function PostItem(props: PostItemProps) {
   const { className, ...post } = props;
   return (
     <div key={post.id} className={cn('flex gap-4 p-4', className)}>
-      <Link href={`/@${post.author.username}`}>
+      <Link href={`/u/@${post.author.username}`}>
         <ProfilePicture user={post.author} />
       </Link>
       <div className="flex w-full flex-col">
         <div className="flex flex-wrap gap-x-1 text-slate-400">
-          <Link href={`/@${post.author.username}`}>
+          <Link href={`/u/@${post.author.username}`}>
             <span>@{post.author.username}</span>
           </Link>
           <span className="text-slate-600">·</span>

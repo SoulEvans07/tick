@@ -11,12 +11,12 @@ export function CommentItem(props: CommentItemProps) {
   const { className, ...comment } = props;
   return (
     <div className="flex gap-4 p-4">
-      <Link href={`/@${comment.author.username}`}>
+      <Link href={`/u/@${comment.author.username}`}>
         <ProfilePicture user={comment.author} />
       </Link>
       <div className={cn('flex flex-col', className)}>
         <div className="flex flex-wrap gap-x-1 text-slate-400">
-          <Link href={`/@${comment.author.username}`}>
+          <Link href={`/u/@${comment.author.username}`}>
             <span>@{comment.author.username}</span>
           </Link>
           <span className="text-slate-600">·</span>

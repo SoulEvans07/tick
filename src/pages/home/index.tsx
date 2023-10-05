@@ -100,7 +100,7 @@ function CreatePostWizard() {
 
   return (
     <div className="flex w-full gap-4">
-      <Link href={`/@${user.username}`} className="min-w-max">
+      <Link href={`/u/@${user.username}`} className="min-w-max">
         <ProfilePicture user={user} />
       </Link>
       <input

@@ -11,12 +11,12 @@ export function PostDetailedItem(post: PostWithUser) {
     <div key={post.id} className="flex gap-4 border-slate-700 px-4 pt-4">
       <div className="flex w-full flex-col gap-y-4">
         <div className="flex-full flex items-center gap-4">
-          <Link href={`/@${post.author.username}`}>
+          <Link href={`/u/@${post.author.username}`}>
             <ProfilePicture user={post.author} />
           </Link>
           <div className="flex flex-col">
             <div className="flex flex-wrap gap-x-1 text-slate-400">
-              <Link href={`/@${post.author.username}`}>
+              <Link href={`/u/@${post.author.username}`}>
                 <span>@{post.author.username}</span>
               </Link>
               <span className="text-slate-600">·</span>

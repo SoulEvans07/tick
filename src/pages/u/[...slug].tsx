@@ -126,7 +126,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const ssg = generateSSGHelper();
   const profiles = await ssg.profile.list.fetch();
   // TODO: limit
-  const profileUrls = profiles.map((profile) => `/@${profile.username}`);
+  const profileUrls = profiles.map((profile) => `/u/@${profile.username}`);
 
   return { paths: profileUrls, fallback: 'blocking' };
 };

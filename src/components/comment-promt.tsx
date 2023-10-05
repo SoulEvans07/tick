@@ -85,7 +85,7 @@ export function CommentPrompt(props: CommentPromptProps) {
 
   return (
     <div className="flex w-full gap-4 border-b border-slate-700 p-4">
-      <Link href={`/@${user.username}`} className="min-w-max">
+      <Link href={`/u/@${user.username}`} className="min-w-max">
         <ProfilePicture user={user} />
       </Link>
       <input
