@@ -4,11 +4,12 @@ import { time } from '~/helpers/time';
 import { ProfilePicture } from '~/components/profile-picture';
 import type { RouterOutputs } from '~/utils/api';
 import { CommentBubble } from '~/assets/icons/comment-bubble';
+import { replaceEmojis } from '~/helpers/emoji';
 
 type PostWithUser = RouterOutputs['post']['list'][number];
 export function PostDetailedItem(post: PostWithUser) {
   return (
-    <div key={post.id} className="flex gap-4 border-slate-700 px-4 pt-4">
+    <div className="flex gap-4 border-slate-700 px-4 pt-4">
       <div className="flex w-full flex-col gap-y-4">
         <div className="flex-full flex items-center gap-4">
           <Link href={`/u/@${post.author.username}`}>
@@ -26,7 +27,9 @@ export function PostDetailedItem(post: PostWithUser) {
                 </span>
               </Link>
             </div>
-            <div>{post.content}</div>
+            <div className="flex items-center" title={post.content}>
+              {replaceEmojis(post.content)}
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-x-1 border-b border-t border-slate-700 p-2 text-slate-600 ">
