@@ -22,3 +22,10 @@ export const reactRatelimiter = new Ratelimit({
   analytics: true,
   prefix: '@upstash/ratelimit',
 });
+
+export const customEmojiRatelimiter = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, '1 h'),
+  analytics: true,
+  prefix: '@upstash/ratelimit',
+});

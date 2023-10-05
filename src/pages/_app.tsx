@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { Toaster } from 'react-hot-toast';
 
 import { api } from '~/utils/api';
+import '@uploadthing/react/styles.css';
 import '~/styles/globals.css';
 
 const MyApp: AppType = ({ Component, pageProps }) => {

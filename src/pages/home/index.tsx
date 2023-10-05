@@ -9,6 +9,7 @@ import { userExistsWithUsername, filterUserForClient } from '~/helpers/user';
 import { PageLayout } from '~/components/page-layout';
 import { ProfilePicture } from '~/components/profile-picture';
 import { PostFeed } from '~/components/post-feed';
+import { UploadButton } from '~/components/uploadthing';
 
 export default function Home() {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
@@ -108,6 +109,19 @@ function CreatePostWizard() {
         onChange={(e) => setContent(e.target.value)}
         onKeyDown={handleKeyDown}
         disabled={isPosting}
+      />
+      <UploadButton
+        input={{ name: ':slack-black:' }}
+        endpoint="customEmoji"
+        onClientUploadComplete={(res) => {
+          // Do something with the response
+          console.log('Files: ', res);
+          toast.success('Upload Completed');
+        }}
+        onUploadError={(error: Error) => {
+          // Do something with the error.
+          toast.error(`ERROR! ${error.message}`);
+        }}
       />
       {content !== '' && !isPosting && <button onClick={sendPost}>Post</button>}
       {isPosting && (
