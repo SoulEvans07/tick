@@ -10,7 +10,11 @@
     "typecheck": "tsc --noEmit",
     "lint": "next lint",
     "start": "next start",
-    "fmt": "prettier --write ."
+    "fmt": "prettier --write .",
+    "test": "npm run test:unit",
+    "test:unit": "vitest run",
+    "test:unit:bail": "vitest run --bail 1",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.24.1",
@@ -50,7 +54,8 @@
     "prettier-plugin-tailwindcss": "^0.5.1",
     "prisma": "^5.1.1",
     "tailwindcss": "^3.3.3",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "vitest": "^0.34.6"
   },
   "ct3aMetadata": {
     "initVersion": "7.20.2"
