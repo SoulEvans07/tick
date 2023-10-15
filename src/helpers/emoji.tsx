@@ -28,8 +28,6 @@ export function parseEmojiTag(tag: string) {
   return emoji;
 }
 
-// P0: write test
-// P1: refactor
 export function emojiInterpolation(
   content: string
 ): JSX.Element | JSX.Element[] {
@@ -108,7 +106,7 @@ export class EmojiInterpolator<TextBlock, EmojiBlock> {
   ) {}
 
   parse(input: string): (TextBlock | EmojiBlock)[] {
-    if (input.length === 0) return [this.mapper.text('')];
+    if (input.length === 0) return [this.mapper.text('', 'empty')];
 
     const bloks: (TextBlock | EmojiBlock)[] = [];
 
@@ -118,14 +116,15 @@ export class EmojiInterpolator<TextBlock, EmojiBlock> {
       .filter(Boolean);
 
     let acc: string[] = [];
+    let i = 0;
     while (parts.length > 0) {
+      i++;
       const [before, middle, after, ...rest] = parts;
       if (!before || !middle || !after) {
-        if (acc.length) {
-          bloks.push(this.mapper.text([...acc, ...parts].join('')));
-        } else {
-          bloks.push(this.mapper.text(parts.join('')));
-        }
+        const content = acc.length
+          ? [...acc, ...parts].join('')
+          : parts.join('');
+        bloks.push(this.mapper.text(content, `text-${i}-${content}`));
         parts = [];
         continue;
       }
@@ -134,11 +133,11 @@ export class EmojiInterpolator<TextBlock, EmojiBlock> {
         const emoji = this.getEmoji(middle);
         if (emoji) {
           if (acc.length) {
-            bloks.push(this.mapper.text(acc.join('')));
+            bloks.push(this.mapper.text(acc.join(''), `before-${i}`));
             acc = [];
           }
 
-          bloks.push(this.mapper.emoji(emoji));
+          bloks.push(this.mapper.emoji(emoji, `emoji-${i}-${emoji.name}`));
           parts = rest;
           continue;
         } else {
@@ -173,7 +172,32 @@ export class EmojiInterpolator<TextBlock, EmojiBlock> {
   }
 }
 
-export const emojiInterpolator = new EmojiInterpolator(emojis, {
-  text: (content) => content,
-  emoji: (emoji) => emoji,
-});
+class ReactMessageMapper implements MessageMapper<JSX.Element, JSX.Element> {
+  text(content: string, key: string) {
+    return (
+      <span className="whitespace-pre-wrap" key={key}>
+        {content}
+      </span>
+    );
+  }
+
+  emoji(emoji: Emoji, key: string) {
+    return (
+      <div className="inline-flex h-5 w-5" key={key}>
+        <Image
+          src={`/emojis/${emoji.unicode}.png`}
+          width={44}
+          height={44}
+          alt={emoji.name}
+          title={emoji.name}
+          className="ASDF"
+        />
+      </div>
+    );
+  }
+}
+
+export const emojiInterpolator = new EmojiInterpolator(
+  emojis,
+  new ReactMessageMapper()
+);

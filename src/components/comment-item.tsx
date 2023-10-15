@@ -4,7 +4,7 @@ import cn from 'classnames';
 import { time } from '~/helpers/time';
 import { ProfilePicture } from '~/components/profile-picture';
 import type { RouterOutputs } from '~/utils/api';
-import { emojiInterpolation } from '~/helpers/emoji';
+import { emojiInterpolator } from '~/helpers/emoji';
 
 type CommentWithUser = RouterOutputs['comment']['list'][number];
 type CommentItemProps = CommentWithUser & { className?: string };
@@ -28,7 +28,7 @@ export function CommentItem(props: CommentItemProps) {
           {/* </Link> */}
         </div>
         <div className="flex items-center" title={comment.content}>
-          {emojiInterpolation(comment.content)}
+          {emojiInterpolator.parse(comment.content)}
         </div>
       </div>
     </div>

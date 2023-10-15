@@ -7,11 +7,11 @@ export type MEmojiBlock = { e: string };
 export class MockMessageMapper
   implements MessageMapper<MTextBlock, MEmojiBlock>
 {
-  text(content: string): MTextBlock {
+  text(content: string, _key: string): MTextBlock {
     return { t: content };
   }
 
-  emoji(emoji: Emoji): MEmojiBlock {
+  emoji(emoji: Emoji, _key: string): MEmojiBlock {
     return { e: emoji.name };
   }
 }

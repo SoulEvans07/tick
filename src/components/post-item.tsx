@@ -5,7 +5,7 @@ import { time } from '~/helpers/time';
 import { ProfilePicture } from '~/components/profile-picture';
 import type { RouterOutputs } from '~/utils/api';
 import { CommentBubble } from '~/assets/icons/comment-bubble';
-import { emojiInterpolation } from '~/helpers/emoji';
+import { emojiInterpolator } from '~/helpers/emoji';
 
 type PostWithUser = RouterOutputs['post']['list'][number];
 type PostItemProps = PostWithUser & { className?: string };
@@ -30,7 +30,7 @@ export function PostItem(props: PostItemProps) {
           </Link>
         </div>
         <div className="flex items-center" title={post.content}>
-          {emojiInterpolation(post.content)}
+          {emojiInterpolator.parse(post.content)}
         </div>
         <div className="mt-2 flex items-center gap-x-1 text-slate-600 ">
           <CommentBubble width={20} height={20} />
