@@ -1,8 +1,7 @@
 import Image from 'next/legacy/image';
-import { z } from 'zod';
 
 import emojiMap from '~/assets/emoji-map.json';
-import { Emoji, EmojiMap, EmojiTag } from '~/types/emoji';
+import { EmojiMap, EmojiTag } from '~/types/emoji';
 
 const emojis = EmojiMap.parse(emojiMap);
 

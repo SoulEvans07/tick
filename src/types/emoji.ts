@@ -13,16 +13,41 @@ export const EmojiWithSkinVariations = SimpleEmoji.extend({
 
 export const MultiSkintoneEmoji = EmojiWithSkinVariations.extend({
   _type: z.literal('multiSkin').default('multiSkin'),
-  multiSkinTone: z.boolean().optional(),
+  multiSkinTone: z.literal(true),
 });
 
 export const Emoji = z.union([
-  SimpleEmoji,
-  EmojiWithSkinVariations,
   MultiSkintoneEmoji,
+  EmojiWithSkinVariations,
+  SimpleEmoji,
 ]);
 
-export const EmojiMap = z.record(Emoji);
+export const EmojiMap = z.record(Emoji).superRefine((input, ctx) => {
+  const entries = Object.entries(input);
+
+  for (const [key, emoji] of entries) {
+    if (emoji.name !== key) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `emoji key ${key} does not match name ${emoji.name}`,
+        path: [key, 'name'],
+      });
+    }
+
+    if ('skinVariations' in emoji) {
+      const variants = Object.entries(emoji.skinVariations);
+      for (const [skinKey, skinVariant] of variants) {
+        if (skinVariant.name !== `${emoji.name}#skin-tone-${skinKey}`) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `skin variant's key ${emoji.name}#skin-tone-${skinKey} does not match name ${skinVariant.name}`,
+            path: [key, 'skinVariations', skinKey, 'name'],
+          });
+        }
+      }
+    }
+  }
+});
 
 export type SimpleEmoji = z.infer<typeof SimpleEmoji>;
 export type EmojiWithSkinVariations = z.infer<typeof EmojiWithSkinVariations>;
