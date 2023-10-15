@@ -1,18 +1,10 @@
 import Image from 'next/legacy/image';
 import { z } from 'zod';
-import { emojis } from '~/assets/emojis';
 
-export const EmojiTag = z
-  .string()
-  .min(3)
-  .max(128)
-  .refine((val) => val.startsWith(':') && val.endsWith(':'), {
-    message: 'Invalid emoji format',
-  });
+import emojiMap from '~/assets/emoji-map.json';
+import { Emoji, EmojiMap, EmojiTag } from '~/types/emoji';
 
-export const EmojiSymbol = z.string().emoji().length(1);
-
-export const Emoji = z.union([EmojiTag, EmojiSymbol]);
+const emojis = EmojiMap.parse(emojiMap);
 
 const regexpBase = `:(.*):`;
 export const emojiRegExpGlobal = new RegExp(regexpBase, 'g');
@@ -107,3 +99,78 @@ export function emojiInterpolation(
 
   return elements;
 }
+
+export type TextBlock = { t: string };
+export type EmojiBlock = { e: string };
+export type MessageBlock = TextBlock | EmojiBlock;
+
+// P4: prepare to handle unicode emoji chars
+export class EmojiInterpolator {
+  constructor(private emojis: EmojiMap) {}
+
+  parse(input: string): MessageBlock[] {
+    if (input.length === 0) return [{ t: '' }];
+
+    const bloks: MessageBlock[] = [];
+
+    let parts = input
+      .split(':')
+      .flatMap((o, i, a) => (a.length - 1 === i ? [o] : [o, ':']))
+      .filter(Boolean);
+
+    // console.log(parts);
+    let acc: string[] = [];
+    while (parts.length > 0) {
+      const [before, middle, after, ...rest] = parts;
+      if (!before || !middle || !after) {
+        if (acc.length) bloks.push({ t: [...acc, ...parts].join('') });
+        else bloks.push({ t: parts.join('') });
+        parts = [];
+        continue;
+      }
+
+      if (before === ':' && after === ':') {
+        // check if emoji exists with middle
+        const emoji = this.getEmoji(middle);
+        if (emoji) {
+          if (acc.length) {
+            bloks.push({ t: acc.join('') });
+            acc = [];
+          }
+
+          bloks.push({ e: emoji.name });
+          parts = rest;
+          continue;
+        } else {
+          acc.push(before, middle);
+          parts = [after, ...rest];
+          continue;
+        }
+      } else {
+        acc.push(before);
+        parts = [middle, after, ...rest];
+        continue;
+      }
+    }
+
+    return bloks;
+  }
+
+  getEmoji(tag: string) {
+    const [name, skintone] = tag.split('#skin-tone-');
+    if (!name) throw new Error('Parsing error');
+
+    const emoji = this.emojis[name];
+    if (!emoji) return undefined;
+
+    if (skintone && 'skinVariations' in emoji) {
+      const variant = emoji.skinVariations[skintone];
+      if (!variant) return undefined;
+      return variant;
+    }
+
+    return emoji;
+  }
+}
+
+export const emojiInterpolator = new EmojiInterpolator(emojis);
