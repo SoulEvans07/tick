@@ -5,11 +5,13 @@ import { time } from '~/helpers/time';
 import { ProfilePicture } from '~/components/profile-picture';
 import type { RouterOutputs } from '~/utils/api';
 import { CommentBubble } from '~/assets/icons/comment-bubble';
+import { emojiInterpolator } from '~/helpers/emoji';
 
 type PostWithUser = RouterOutputs['post']['list'][number];
 type PostItemProps = PostWithUser & { className?: string };
 export function PostItem(props: PostItemProps) {
   const { className, ...post } = props;
+
   return (
     <div key={post.id} className={cn('flex gap-4 p-4', className)}>
       <Link href={`/u/@${post.author.username}`}>
@@ -27,7 +29,9 @@ export function PostItem(props: PostItemProps) {
             </span>
           </Link>
         </div>
-        <span>{post.content}</span>
+        <div className="flex items-center" title={post.content}>
+          {emojiInterpolator.parse(post.content)}
+        </div>
         <div className="mt-2 flex items-center gap-x-1 text-slate-600 ">
           <CommentBubble width={20} height={20} />
           <span>{post._count.comments}</span>
