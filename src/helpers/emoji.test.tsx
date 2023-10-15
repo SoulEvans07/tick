@@ -1,9 +1,10 @@
 import { describe, expect, test } from 'vitest';
 import { mockEmojis } from '~/__mocks__/emojis';
+import { MockMessageMapper } from '~/__mocks__/message-mapper';
 import { EmojiInterpolator } from '~/helpers/emoji';
 
 describe('emoji interpolation', () => {
-  const ei = new EmojiInterpolator(mockEmojis);
+  const ei = new EmojiInterpolator(mockEmojis, new MockMessageMapper());
 
   describe('no emoji', () => {
     describe('empty string', () => {

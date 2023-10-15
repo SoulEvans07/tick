@@ -1,7 +1,8 @@
 import Image from 'next/legacy/image';
 
 import emojiMap from '~/assets/emoji-map.json';
-import { EmojiMap, EmojiTag } from '~/types/emoji';
+import { type Emoji, EmojiMap, EmojiTag } from '~/types/emoji';
+import type { MessageMapper } from '~/types/message-mapper';
 
 const emojis = EmojiMap.parse(emojiMap);
 
@@ -99,45 +100,45 @@ export function emojiInterpolation(
   return elements;
 }
 
-export type TextBlock = { t: string };
-export type EmojiBlock = { e: string };
-export type MessageBlock = TextBlock | EmojiBlock;
-
 // P4: prepare to handle unicode emoji chars
-export class EmojiInterpolator {
-  constructor(private emojis: EmojiMap) {}
+export class EmojiInterpolator<TextBlock, EmojiBlock> {
+  constructor(
+    private emojis: EmojiMap,
+    private mapper: MessageMapper<TextBlock, EmojiBlock>
+  ) {}
 
-  parse(input: string): MessageBlock[] {
-    if (input.length === 0) return [{ t: '' }];
+  parse(input: string): (TextBlock | EmojiBlock)[] {
+    if (input.length === 0) return [this.mapper.text('')];
 
-    const bloks: MessageBlock[] = [];
+    const bloks: (TextBlock | EmojiBlock)[] = [];
 
     let parts = input
       .split(':')
       .flatMap((o, i, a) => (a.length - 1 === i ? [o] : [o, ':']))
       .filter(Boolean);
 
-    // console.log(parts);
     let acc: string[] = [];
     while (parts.length > 0) {
       const [before, middle, after, ...rest] = parts;
       if (!before || !middle || !after) {
-        if (acc.length) bloks.push({ t: [...acc, ...parts].join('') });
-        else bloks.push({ t: parts.join('') });
+        if (acc.length) {
+          bloks.push(this.mapper.text([...acc, ...parts].join('')));
+        } else {
+          bloks.push(this.mapper.text(parts.join('')));
+        }
         parts = [];
         continue;
       }
 
       if (before === ':' && after === ':') {
-        // check if emoji exists with middle
         const emoji = this.getEmoji(middle);
         if (emoji) {
           if (acc.length) {
-            bloks.push({ t: acc.join('') });
+            bloks.push(this.mapper.text(acc.join('')));
             acc = [];
           }
 
-          bloks.push({ e: emoji.name });
+          bloks.push(this.mapper.emoji(emoji));
           parts = rest;
           continue;
         } else {
@@ -172,4 +173,7 @@ export class EmojiInterpolator {
   }
 }
 
-export const emojiInterpolator = new EmojiInterpolator(emojis);
+export const emojiInterpolator = new EmojiInterpolator(emojis, {
+  text: (content) => content,
+  emoji: (emoji) => emoji,
+});
