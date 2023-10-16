@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { time } from '~/helpers/time';
 import { ProfilePicture } from '~/components/profile-picture';
 import type { RouterOutputs } from '~/utils/api';
-import { CommentBubble } from '~/assets/icons/comment-bubble';
+import { CommentBubbleIcon } from '~/assets/icons/comment-bubble';
 import { emojiInterpolator } from '~/helpers/emoji';
 
 type PostWithUser = RouterOutputs['post']['list'][number];
@@ -33,7 +33,7 @@ export function PostDetailedItem(post: PostWithUser) {
           </div>
         </div>
         <div className="flex items-center gap-x-1 border-b border-t border-slate-700 p-2 text-slate-600 ">
-          <CommentBubble width={20} height={20} />
+          <CommentBubbleIcon width={20} height={20} />
           <span>{post._count.comments}</span>
         </div>
       </div>

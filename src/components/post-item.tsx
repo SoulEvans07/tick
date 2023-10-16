@@ -4,7 +4,7 @@ import cn from 'classnames';
 import { time } from '~/helpers/time';
 import { ProfilePicture } from '~/components/profile-picture';
 import type { RouterOutputs } from '~/utils/api';
-import { CommentBubble } from '~/assets/icons/comment-bubble';
+import { CommentBubbleIcon } from '~/assets/icons/comment-bubble';
 import { emojiInterpolator } from '~/helpers/emoji';
 
 type PostWithUser = RouterOutputs['post']['list'][number];
@@ -33,7 +33,7 @@ export function PostItem(props: PostItemProps) {
           {emojiInterpolator.parse(post.content)}
         </div>
         <div className="mt-2 flex items-center gap-x-1 text-slate-600 ">
-          <CommentBubble width={20} height={20} />
+          <CommentBubbleIcon width={20} height={20} />
           <span>{post._count.comments}</span>
         </div>
       </div>
