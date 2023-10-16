@@ -8,6 +8,8 @@ import { api } from '~/utils/api';
 import { ProfilePicture } from '~/components/profile-picture';
 import { filterUserForClient, userExistsWithUsername } from '~/helpers/user';
 import { LoadingSpinner } from '~/components/loading';
+import { EmojiSelect } from '~/components/emoji-select';
+import { Button } from '~/components/shadcn/button';
 
 type CommentPromptProps = { postId: string };
 export function CommentPrompt(props: CommentPromptProps) {
@@ -84,26 +86,43 @@ export function CommentPrompt(props: CommentPromptProps) {
   if (!userExistsWithUsername(user)) return null;
 
   return (
-    <div className="flex w-full gap-4 border-b border-slate-700 p-4">
-      <Link href={`/u/@${user.username}`} className="min-w-max">
-        <ProfilePicture user={user} />
-      </Link>
-      <input
-        className="min-w-0 grow bg-transparent outline-none"
-        placeholder="Reply..."
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        onKeyDown={handleKeyDown}
-        disabled={isPosting}
-      />
-      {content !== '' && !isPosting && (
-        <button onClick={sendComment}>Reply</button>
-      )}
-      {isPosting && (
-        <div className="flex items-center justify-center">
-          <LoadingSpinner size={20} />
+    <div className="flex w-full flex-col gap-3 border-b border-slate-700 px-4 pb-2 pt-4">
+      <div className="flex w-full gap-4">
+        <Link href={`/u/@${user.username}`} className="min-w-max">
+          <ProfilePicture user={user} />
+        </Link>
+        <input
+          className="min-w-0 grow bg-transparent outline-none"
+          placeholder="Reply..."
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          onKeyDown={handleKeyDown}
+          disabled={isPosting}
+        />
+      </div>
+
+      <div className="ml-[64px] flex items-center gap-x-1 border-t border-slate-700 pr-2 pt-2 text-slate-600">
+        <EmojiSelect
+          onSelect={(emoji) => setContent((prev) => `${prev}:${emoji.name}:`)}
+        />
+        <div className="ml-auto">
+          {!isPosting && (
+            <Button
+              variant="default"
+              size="sm"
+              onClick={sendComment}
+              disabled={content === ''}
+            >
+              Reply
+            </Button>
+          )}
+          {isPosting && (
+            <div className="flex items-center justify-center">
+              <LoadingSpinner size={20} />
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
