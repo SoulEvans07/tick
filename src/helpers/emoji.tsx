@@ -1,10 +1,8 @@
 import Image from 'next/legacy/image';
 
-import emojiMap from '~/assets/emoji-map.json';
-import { type Emoji, EmojiMap } from '~/types/emoji';
+import { emojis } from '~/assets/emoji';
+import type { Emoji, EmojiMap } from '~/types/emoji';
 import type { MessageMapper } from '~/types/message-mapper';
-
-const emojis = EmojiMap.parse(emojiMap);
 
 // P4: prepare to handle unicode emoji chars
 export class EmojiInterpolator<TextBlock, EmojiBlock> {
@@ -98,7 +96,6 @@ class ReactMessageMapper implements MessageMapper<JSX.Element, JSX.Element> {
           height={44}
           alt={emoji.name}
           title={emoji.name}
-          className="ASDF"
         />
       </div>
     );
