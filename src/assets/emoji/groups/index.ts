@@ -11,12 +11,24 @@ import objects from './objects.json';
 import symbols from './symbols.json';
 import flags from './flags.json';
 
-export const EmojiGroups: Record<EmojiGroupKey, { title: string; list: string[] }> = {
-  smileys: { title: 'Smileys & People', list: z.array(z.string()).parse(smileys) },
-  nature: { title: 'Animals & Nature', list: z.array(z.string()).parse(nature) },
+export const EmojiGroups: Record<
+  EmojiGroupKey,
+  { title: string; list: string[] }
+> = {
+  smileys: {
+    title: 'Smileys & People',
+    list: z.array(z.string()).parse(smileys),
+  },
+  nature: {
+    title: 'Animals & Nature',
+    list: z.array(z.string()).parse(nature),
+  },
   food: { title: 'Food & Drink', list: z.array(z.string()).parse(food) },
   travel: { title: 'Travel & Places', list: z.array(z.string()).parse(travel) },
-  activities: { title: 'Activities', list: z.array(z.string()).parse(activities) },
+  activities: {
+    title: 'Activities',
+    list: z.array(z.string()).parse(activities),
+  },
   objects: { title: 'Objects', list: z.array(z.string()).parse(objects) },
   symbols: { title: 'Symbols', list: z.array(z.string()).parse(symbols) },
   flags: { title: 'Flags', list: z.array(z.string()).parse(flags) },
