@@ -9,6 +9,8 @@ import { userExistsWithUsername, filterUserForClient } from '~/helpers/user';
 import { PageLayout } from '~/components/page-layout';
 import { ProfilePicture } from '~/components/profile-picture';
 import { PostFeed } from '~/components/post-feed';
+import { Button } from '~/components/shadcn/button';
+import { EmojiSelect } from '~/components/emoji-select';
 
 export default function Home() {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
@@ -19,9 +21,9 @@ export default function Home() {
   return (
     <PageLayout>
       {userLoaded && (
-        <div className="border-b border-slate-700 p-4">
+        <div className="border-b border-slate-700">
           {!isSignedIn ? (
-            <div className="flex justify-center">
+            <div className="flex justify-center p-4">
               <SignInButton />
             </div>
           ) : (
@@ -99,22 +101,41 @@ function CreatePostWizard() {
   if (!userExistsWithUsername(user)) return null;
 
   return (
-    <div className="flex w-full gap-4">
-      <ProfilePicture user={user} onClick={() => void clerk.signOut()} />
-      <input
-        className="min-w-0 grow bg-transparent outline-none"
-        placeholder="Type some text..."
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        onKeyDown={handleKeyDown}
-        disabled={isPosting}
-      />
-      {content !== '' && !isPosting && <button onClick={sendPost}>Post</button>}
-      {isPosting && (
-        <div className="flex items-center justify-center">
-          <LoadingSpinner size={20} />
+    <div className="flex w-full flex-col gap-3 px-4 pb-2 pt-4">
+      <div className="flex w-full gap-4">
+        <ProfilePicture user={user} onClick={() => void clerk.signOut()} />
+        <input
+          className="min-w-0 grow bg-transparent outline-none "
+          placeholder="Type some text..."
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          onKeyDown={handleKeyDown}
+          disabled={isPosting}
+        />
+      </div>
+
+      <div className="ml-[64px] flex items-center gap-x-1 border-t border-slate-700 pr-2 pt-2 text-slate-600">
+        <EmojiSelect
+          onSelect={(emoji) => setContent((prev) => `${prev}:${emoji.name}:`)}
+        />
+        <div className="ml-auto">
+          {!isPosting && (
+            <Button
+              variant="default"
+              size="sm"
+              onClick={sendPost}
+              disabled={content === ''}
+            >
+              Post
+            </Button>
+          )}
+          {isPosting && (
+            <div className="flex items-center justify-center">
+              <LoadingSpinner size={20} />
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
