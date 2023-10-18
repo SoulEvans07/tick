@@ -21,6 +21,7 @@ import { LightbulbIcon } from '~/assets/icons/lightbulb';
 import { PeaceSignIcon } from '~/assets/icons/peace-sign';
 import { FlagIcon } from '~/assets/icons/flag';
 import { emojis, skinTones } from '~/assets/emoji';
+import { Input } from '~/components/shadcn/input';
 
 export interface EmojiSelectProps {
   onSelect: (selected: Emoji) => void;
@@ -30,6 +31,7 @@ export function EmojiSelect(props: EmojiSelectProps) {
   const { onSelect } = props;
 
   const [currentTone, setSkinTone] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
 
   return (
     <Popover.Root modal>
@@ -49,22 +51,32 @@ export function EmojiSelect(props: EmojiSelectProps) {
           </Tabs.List>
           {tabs.map(({ key, groups }) => (
             <Tabs.Content value={key} key={key} className="w-full max-w-full">
-              <div className="flex max-h-[240px] flex-col overflow-y-auto overflow-x-hidden p-3">
-                {groups.map(({ title, list }) => (
-                  <div className="flex flex-col" key={title}>
-                    <span className="text-sm">{title}</span>
-                    <div className="flex flex-wrap justify-start gap-0.5 overflow-hidden">
-                      {list.map((name) => (
-                        <EmojiButton
-                          key={name}
-                          name={name}
-                          skinTone={currentTone}
-                          onSelect={onSelect}
-                        />
-                      ))}
-                    </div>
+              <div className="flex max-h-[280px] flex-col gap-3 p-3">
+                {key === 'search' && (
+                  <div>
+                    <Input
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
                   </div>
-                ))}
+                )}
+                <div className="flex flex-col gap-3 overflow-y-auto overflow-x-hidden">
+                  {groups.map(({ title, list }) => (
+                    <div className="flex flex-col gap-1" key={title}>
+                      <span className="text-sm">{title}</span>
+                      <div className="flex flex-wrap justify-start gap-0.5 overflow-hidden">
+                        {list.map((name) => (
+                          <EmojiButton
+                            key={name}
+                            name={name}
+                            skinTone={currentTone}
+                            onSelect={onSelect}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </Tabs.Content>
           ))}
