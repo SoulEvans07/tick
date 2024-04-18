@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { CSSProperties, useEffect, useMemo, useState } from 'react';
+import { type CSSProperties, useEffect, useState, useMemo } from 'react';
 import { z } from 'zod';
 
 const allDigits = new Array(10).fill(null).map((_, i) => i);
@@ -73,7 +73,7 @@ function DigitDisplay(props: { digit: number }) {
   const [style, setStyle] = useState<CSSProperties>({
     fontSize: `${fontSize}px`,
     lineHeight: `${lineHeight}px`,
-    marginTop: `calc(19 * ${lineHeight}px - 25px)`,
+    marginTop: `calc(${allDigits.length * 2 - 1} * ${lineHeight}px - 25px)`,
     transition: `transform ${duration}ms ease`,
   });
 
